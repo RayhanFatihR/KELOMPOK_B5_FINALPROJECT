@@ -10,7 +10,7 @@ async function connectDB() {
 
   const config = {
     host: process.env.DB_HOST || 'db_service',
-    user: process.env.DB_USER || 'rayhan',
+    user: process.env.DB_USER || 'user',
     password: process.env.DB_PASS || 'password123',
     database: process.env.DB_NAME || 'penyewaan_motor',
     waitForConnections: true,
