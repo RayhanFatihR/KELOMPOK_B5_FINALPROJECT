@@ -12,7 +12,7 @@ services:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: penyewaan_motor
       MYSQL_USER: user
-      MYSQL_PASSWORD: user123
+      MYSQL_PASSWORD: password123
     volumes:
       - db_data:/var/lib/mysql
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -31,7 +31,7 @@ services:
     environment:
       DB_HOST: db_service
       DB_USER: user
-      DB_PASS: user123
+      DB_PASS: password123
       DB_NAME: penyewaan_motor
       APP_PORT: 3000
     depends_on:
