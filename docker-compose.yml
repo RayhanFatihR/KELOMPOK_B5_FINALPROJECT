@@ -6,10 +6,10 @@ services:
     container_name: db_penyewaan_motor
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: password123
       MYSQL_DATABASE: penyewaan_motor
-      MYSQL_USER: user
-      MYSQL_PASSWORD: user123
+      MYSQL_USER: rayhan
+      MYSQL_PASSWORD: password123
     volumes:
       - db_data:/var/lib/mysql
     networks:
@@ -23,8 +23,8 @@ services:
       - "3000"
     environment:
       DB_HOST: db_service
-      DB_USER: user
-      DB_PASS: user123
+      DB_USER: rayhan
+      DB_PASS: password123
       DB_NAME: penyewaan_motor
       APP_PORT: 3000
     depends_on:
@@ -46,7 +46,7 @@ services:
       - penyewaan_motor_network
 
 volumes:
-  db_data:
+  db_data: 
 
 networks:
   penyewaan_motor_network:
