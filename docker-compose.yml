@@ -1,47 +1,53 @@
 version: "3.8"
 
 services:
-  # --- 1. DATABASE SERVICE ---
   db_service:
     image: mysql:8.0
-    container_name: db_${GROUP_NAME}
+    container_name: db_penyewaan_motor
     restart: always
     environment:
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASS}
-      MYSQL_ROOT_PASSWORD: rootpassword
-    # volumes
-    # Network
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: penyewaan_motor
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user123
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - penyewaan_motor_network
 
-  # --- 2. APP SERVICE ---
   app_service:
     build: ./app
-    container_name: app_${GROUP_NAME}
+    container_name: app_penyewaan_motor
     restart: always
     expose:
       - "3000"
     environment:
-      - DB_HOST=db_service
-      - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
-      - DB_NAME=${DB_NAME}
-      - APP_PORT=3000
+      DB_HOST: db_service
+      DB_USER: user
+      DB_PASS: user123
+      DB_NAME: penyewaan_motor
+      APP_PORT: 3000
     depends_on:
       - db_service
-    # Network
+    networks:
+      - penyewaan_motor_network
 
-  # --- 3. NGINX SERVICE ---
   nginx_service:
     image: nginx:alpine
-    container_name: nginx_${GROUP_NAME}
+    container_name: nginx_penyewaan_motor
     restart: always
     ports:
-      - "${APP_PORT}:80"
+      - "2562:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - app_service
-    # Network
-    # volumes
+    networks:
+      - penyewaan_motor_network
 
-#--- VOLUMES AND NETWORKS ---
-# tambahkan bagian volumes dan networks di sini
+volumes:
+  db_data:
+
+networks:
+  penyewaan_motor_network:
+    driver: bridge

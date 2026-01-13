@@ -1,11 +1,214 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Project Tekser</title>
-  </head>
-  <body>
-    <h1>Hello World! Silakan edit file ini.</h1>
-  </body>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistem Pencatat Penyewaan Motor</title>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+</head>
+
+<body class="bg-light">
+
+<div class="container py-4">
+
+  <!-- JUDUL -->
+  <div class="text-center mb-4">
+    <h1 class="fw-bold">🏍️ Sistem Pencatat Penyewaan Motor</h1>
+    <p class="text-muted">Aplikasi Manajemen Motor, Penyewa, dan Penyewaan</p>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      Tambah Motor
+    </div>
+    <div class="card-body">
+      <form action="/motor" method="POST" class="row g-3">
+        <div class="col-md-6">
+          <input type="text" name="nama_motor" class="form-control" placeholder="Nama Motor" required>
+        </div>
+        <div class="col-md-6">
+          <input type="text" name="nomor_polisi" class="form-control" placeholder="Nomor Polisi" required>
+        </div>
+        <div class="col-12">
+          <button class="btn btn-primary">Simpan Motor</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-secondary text-white">
+      Daftar Motor
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table table-bordered table-striped align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Nama Motor</th>
+            <th>Nomor Polisi</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% motor.forEach(m => { %>
+          <tr>
+            <td><%= m.nama_motor %></td>
+            <td><%= m.nomor_polisi %></td>
+            <td>
+              <span class="badge <%= m.status_motor === 'Tersedia' ? 'bg-success' : 'bg-danger' %>">
+                <%= m.status_motor %>
+              </span>
+            </td>
+            <td>
+              <a href="/motor/delete/<%= m.id_motor %>" class="btn btn-sm btn-danger">
+                Hapus
+              </a>
+            </td>
+          </tr>
+        <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      Tambah Penyewa
+    </div>
+    <div class="card-body">
+      <form action="/penyewa" method="POST" class="row g-3">
+        <div class="col-md-4">
+          <input type="text" name="nama_penyewa" class="form-control" placeholder="Nama Penyewa" required>
+        </div>
+        <div class="col-md-4">
+          <input type="text" name="no_hp" class="form-control" placeholder="No HP" required>
+        </div>
+        <div class="col-md-4">
+          <input type="text" name="alamat" class="form-control" placeholder="Alamat" required>
+        </div>
+        <div class="col-12">
+          <button class="btn btn-primary">Simpan Penyewa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-secondary text-white">
+      Daftar Penyewa
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>Nama</th>
+            <th>No HP</th>
+            <th>Alamat</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% penyewa.forEach(p => { %>
+          <tr>
+            <td><%= p.nama_penyewa %></td>
+            <td><%= p.no_hp %></td>
+            <td><%= p.alamat %></td>
+            <td>
+              <a href="/penyewa/delete/<%= p.id_penyewa %>" class="btn btn-sm btn-danger">
+                Hapus
+              </a>
+            </td>
+          </tr>
+        <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-warning">
+      Tambah Penyewaan
+    </div>
+    <div class="card-body">
+      <form action="/sewa" method="POST" class="row g-3">
+        <div class="col-md-3">
+          <select name="id_motor" class="form-select" required>
+            <option value="">Pilih Motor</option>
+            <% motor.forEach(m => { if (m.status_motor === 'Tersedia') { %>
+              <option value="<%= m.id_motor %>"><%= m.nama_motor %></option>
+            <% } }) %>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <select name="id_penyewa" class="form-select" required>
+            <option value="">Pilih Penyewa</option>
+            <% penyewa.forEach(p => { %>
+              <option value="<%= p.id_penyewa %>"><%= p.nama_penyewa %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <input type="date" name="tanggal_sewa" class="form-control" required>
+        </div>
+
+        <div class="col-md-3">
+          <input type="date" name="tanggal_kembali" class="form-control" required>
+        </div>
+
+        <div class="col-12">
+          <button class="btn btn-warning">Simpan Penyewaan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-dark text-white">
+      Data Penyewaan Aktif
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>Motor</th>
+            <th>Penyewa</th>
+            <th>Tgl Sewa</th>
+            <th>Tgl Kembali</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% penyewaan.forEach(s => { %>
+          <tr>
+            <td><%= s.nama_motor %></td>
+            <td><%= s.nama_penyewa %></td>
+            <td><%= s.tanggal_sewa %></td>
+            <td><%= s.tanggal_kembali %></td>
+            <td>
+              <span class="badge bg-danger">
+                <%= s.status_sewa %>
+              </span>
+            </td>
+            <td>
+              <a href="/sewa/selesai/<%= s.id_sewa %>" class="btn btn-sm btn-success">
+                Selesai
+              </a>
+            </td>
+          </tr>
+        <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+</body>
 </html>

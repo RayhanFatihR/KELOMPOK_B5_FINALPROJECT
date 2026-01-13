@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 require("dotenv").config();
 const express = require("express");
 const mysql = require("mysql2");
@@ -7,10 +8,22 @@ const app = express();
 // =========================
 // Middleware
 // =========================
+=======
+// TODO: Ini adalah titik masuk aplikasi, setup Express, Middleware, dan Server Listener disini
+
+require("dotenv").config();
+const express = require("express");
+const db = require("./config/database");
+
+const app = express();
+
+// Middleware
+>>>>>>> d7f8d39 (1)
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.set("view engine", "ejs");
 
+<<<<<<< HEAD
 // =========================
 // Database Connection
 // =========================
@@ -182,3 +195,21 @@ app.get("/sewa/selesai/:id", (req, res) => {
 app.listen(process.env.APP_PORT, () => {
   console.log(`App running on port ${process.env.APP_PORT}`);
 });
+=======
+// Inject DB pool ke request
+app.use((req, res, next) => {
+  req.db = db;
+  next();
+});
+
+// Routes
+const routes = require("./routes/index");
+app.use("/", routes);
+
+// Server
+const PORT = process.env.APP_PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 App running on port ${PORT}`);
+});
+
+>>>>>>> d7f8d39 (1)

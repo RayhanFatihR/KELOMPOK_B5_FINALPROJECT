@@ -1,6 +1,10 @@
 {
   "name": "penyewaan-motor",
   "version": "1.0.0",
+<<<<<<< HEAD
+=======
+  "description": "Sistem Pencatat Penyewaan Motor berbasis Docker",
+>>>>>>> d7f8d39 (1)
   "main": "app.js",
   "dependencies": {
     "express": "^4.18.2",
