@@ -1,36 +1,21 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-FROM node:18
-=======
-# import image node versi 18 alpine
-=======
-# =============================
-# STAGE 1: Dependencies
-# =============================
-FROM node:18-alpine AS dependencies
+# Multi-stage Dockerfile for production
 
+# Stage: install production dependencies
+FROM node:18-alpine AS dependencies
 WORKDIR /usr/src/app
 
-# Copy package files
+# Copy package files and install production dependencies
 COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
 
-# Install production dependencies only
-RUN npm ci --only=production && \
-    npm cache clean --force
-
-# =============================
-# STAGE 2: Production
-# =============================
->>>>>>> 29a7576 (2)
-FROM node:18-alpine
->>>>>>> d7f8d39 (1)
+# Stage: production image
+FROM node:18-alpine AS production
 
 # Install dumb-init for proper signal handling
 RUN apk add --no-cache dumb-init
 
 # Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
+RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
 
 WORKDIR /usr/src/app
 
@@ -40,28 +25,14 @@ COPY --from=dependencies --chown=nodejs:nodejs /usr/src/app/node_modules ./node_
 # Copy application code
 COPY --chown=nodejs:nodejs . .
 
-# Create necessary directories
-RUN mkdir -p views public && \
-    chown -R nodejs:nodejs /usr/src/app
+# Create necessary directories and set permissions
+RUN mkdir -p views public && chown -R nodejs:nodejs /usr/src/app
 
-# Switch to non-root user
+# Use non-root user
 USER nodejs
 
-# Expose app port
 EXPOSE 3000
-<<<<<<< HEAD
-=======
 
-<<<<<<< HEAD
->>>>>>> d7f8d39 (1)
-=======
-# Remove Dockerfile healthcheck: handled in docker-compose.yml
-# HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-#   CMD node -e "require('http').get('http://localhost:3000', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
-
-# Use dumb-init for proper signal handling
+# Entrypoint and default command
 ENTRYPOINT ["dumb-init", "--"]
-
-# Start the app
->>>>>>> 29a7576 (2)
 CMD ["node", "app.js"]
