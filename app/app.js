@@ -16,19 +16,35 @@ require("dotenv").config();
 =======
 >>>>>>> ec6fdfb (2)
 const express = require("express");
+const path = require("path");
 const app = express();
+
+// Load environment variables (optional jika tidak pakai .env file di container)
+// const dotenv = require("dotenv");
+// dotenv.config();
+
 const connectDB = require("./config/database");
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 // Middleware
 >>>>>>> d7f8d39 (1)
 =======
 // Middleware, parser, view engine, dll.
 >>>>>>> ec6fdfb (2)
+=======
+// ========================
+// MIDDLEWARE
+// ========================
+>>>>>>> 29a7576 (2)
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.set("view engine", "ejs");
 
+// Set view engine
+app.set("view engine", "ejs");
+app.set("views", __dirname + "/view");
+
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 // =========================
@@ -216,17 +232,132 @@ async function startServer() {
     next();
   });
 >>>>>>> ec6fdfb (2)
+=======
 
-  // Routes
-  const routes = require("./routes/index");
-  app.use("/", routes);
+// Serve static files (CSS, JS, images)
+app.use(express.static(path.join(__dirname, "public")));
 
-  const PORT = process.env.APP_PORT || 3000;
-  app.listen(PORT, () => console.log(`🚀 App running on port ${PORT}`));
+// Request logger (simple)
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
+
+// ========================
+// GLOBAL ERROR HANDLER
+// ========================
+app.use((err, req, res, next) => {
+  console.error("❌ Global Error:", err.stack);
+  res.status(err.status || 500).json({
+    error: {
+      message: err.message || "Internal Server Error",
+      status: err.status || 500
+    }
+  });
+});
+>>>>>>> 29a7576 (2)
+
+// ========================
+// START SERVER
+// ========================
+async function startServer() {
+  try {
+    // Inisialisasi koneksi database
+    console.log("🔄 Initializing database connection...");
+    const db = await connectDB();
+    console.log("✅ Database pool initialized successfully");
+
+    // Inject db pool ke semua request
+    app.use((req, res, next) => {
+      req.db = db;
+      next();
+    });
+
+    // Load routes
+    const routes = require("./routes/index");
+    app.use("/", routes);
+
+    // Health check endpoint
+    app.get("/health", (req, res) => {
+      res.status(200).json({
+        status: "OK",
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+      });
+    });
+
+    // 404 handler
+    app.use((req, res) => {
+      res.status(404).render("404", {
+        url: req.originalUrl
+      });
+    });
+
+    // Start server
+    const PORT = process.env.APP_PORT || 3000;
+    const HOST = "0.0.0.0";
+
+    const server = app.listen(PORT, HOST, () => {
+      console.log("=================================");
+      console.log("🚀 Server Information");
+      console.log("=================================");
+      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`Server: http://${HOST}:${PORT}`);
+      console.log(`Health: http://${HOST}:${PORT}/health`);
+      console.log("=================================");
+    });
+
+    // Graceful shutdown
+    const shutdown = async (signal) => {
+      console.log(`\n⚠️  ${signal} received, shutting down gracefully...`);
+
+      server.close(async () => {
+        console.log("✅ HTTP server closed");
+
+        try {
+          await db.end();
+          console.log("✅ Database connections closed");
+          process.exit(0);
+        } catch (err) {
+          console.error("❌ Error during shutdown:", err);
+          process.exit(1);
+        }
+      });
+
+      // Force shutdown after 10 seconds
+      setTimeout(() => {
+        console.error("❌ Forced shutdown after timeout");
+        process.exit(1);
+      }, 10000);
+    };
+
+    process.on("SIGTERM", () => shutdown("SIGTERM"));
+    process.on("SIGINT", () => shutdown("SIGINT"));
+
+  } catch (err) {
+    console.error("❌ Failed to start server:", err);
+    process.exit(1);
+  }
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> d7f8d39 (1)
 =======
 startServer();
 >>>>>>> ec6fdfb (2)
+=======
+// Handle unhandled promise rejections
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("❌ Unhandled Rejection at:", promise, "reason:", reason);
+  process.exit(1);
+});
+
+// Handle uncaught exceptions
+process.on("uncaughtException", (err) => {
+  console.error("❌ Uncaught Exception:", err);
+  process.exit(1);
+});
+
+startServer();
+>>>>>>> 29a7576 (2)

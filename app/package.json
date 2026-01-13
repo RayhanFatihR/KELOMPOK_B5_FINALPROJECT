@@ -2,6 +2,7 @@
   "name": "penyewaan-motor",
   "version": "1.0.0",
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   "description": "Sistem Pencatat Penyewaan Motor berbasis Docker",
 >>>>>>> d7f8d39 (1)
@@ -11,5 +12,28 @@
     "mysql2": "^3.6.0",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9"
+=======
+  "description": "Sistem Pencatat Penyewaan Motor berbasis Docker - Kelompok B5",
+  "main": "app.js",
+  "author": "Kelompok B5",
+  "license": "MIT",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.6.1",
+    "ejs": "^3.1.9",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+>>>>>>> 29a7576 (2)
   }
 }

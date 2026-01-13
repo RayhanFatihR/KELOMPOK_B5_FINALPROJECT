@@ -1,20 +1,27 @@
 version: "3.8"
 
 services:
+  # ===============================
+  # 1. DATABASE SERVICE (MySQL)
+  # ===============================
   db_service:
     image: mysql:8.0
     container_name: db_penyewaan_motor
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: password123
+      MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: penyewaan_motor
-      MYSQL_USER: rayhan
-      MYSQL_PASSWORD: password123
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user123
     volumes:
       - db_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - penyewaan_motor_network
 
+  # ===============================
+  # 2. APP SERVICE (Express.js)
+  # ===============================
   app_service:
     build: ./app
     container_name: app_penyewaan_motor
@@ -23,8 +30,8 @@ services:
       - "3000"
     environment:
       DB_HOST: db_service
-      DB_USER: rayhan
-      DB_PASS: password123
+      DB_USER: user
+      DB_PASS: user123
       DB_NAME: penyewaan_motor
       APP_PORT: 3000
     depends_on:
@@ -32,6 +39,9 @@ services:
     networks:
       - penyewaan_motor_network
 
+  # ===============================
+  # 3. NGINX SERVICE (Reverse Proxy)
+  # ===============================
   nginx_service:
     image: nginx:alpine
     container_name: nginx_penyewaan_motor
@@ -45,9 +55,17 @@ services:
     networks:
       - penyewaan_motor_network
 
+# ===============================
+# VOLUMES
+# ===============================
 volumes:
-  db_data: 
+  db_data:
+    name: mysql_data_penyewaan_motor
 
+# ===============================
+# NETWORKS
+# ===============================
 networks:
   penyewaan_motor_network:
     driver: bridge
+    name: net_penyewaan_motor
